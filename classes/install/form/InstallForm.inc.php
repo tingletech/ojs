@@ -78,7 +78,7 @@ class InstallForm extends Form {
 		if (function_exists('sha1')) {
 			$this->supportedEncryptionAlgorithms['sha1'] = 'SHA1';
 		}
-		if (CRYPT_BLOWFISH == 1) {
+		if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH == 1) {
 			$this->supportedEncryptionAlgorithms['bcrypt'] = 'BCRYPT';
 		}
 

@@ -229,12 +229,19 @@ class Validation {
 			// https://gist.github.com/1053158
 			// http://stackoverflow.com/questions/2225720/
 			case 'bcrypt':
- 				if (CRYPT_BLOWFISH != 1) {
- 					throw new Exception("need php >= 5.3");
- 				} else {
+ 				if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH == 1) {
  					$salt = '$2a$12$' . 
-						strtr(base64_encode(md5($user, true)),'+','.');
- 					return crypt($password, $salt);
+						strtr(base64_encode(md5($username, true)),'+','.');
+ 					$crypt = crypt($password, $salt);
+					// check size of crypt return per code review
+					// paranoia?  how do we write a test for this; break bcyrpt?
+					if (strlen($crypt)  == 60) {
+						return $crypt;
+					} else {
+						// internationalize?
+						$message = "expected 60 chars from bcrypt but got: " . $crypt;
+						trigger_error($message, E_USER_ERROR);
+					}
  				}
 			case 'md5':
 			default:
