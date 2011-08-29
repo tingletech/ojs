@@ -224,6 +224,8 @@ class Validation {
 			case 'sha1':
 				if (function_exists('sha1')) {
 					return sha1($valueToEncrypt);
+				} else {
+					fatalError("sha1 specified as encryption option but is not supported by this PHP");
 				}
 			// http://yorickpeterse.com/articles/use-bcrypt-fool/
 			// https://gist.github.com/1053158
@@ -235,14 +237,16 @@ class Validation {
  					$crypt = crypt($password, $salt);
 					// check size of crypt return per code review
 					// paranoia?  how do we write a test for this; break bcyrpt?
-					if (strlen($crypt)  == 60) {
+					if (strlen($crypt) == 60) {
 						return $crypt;
 					} else {
 						// internationalize?
 						$message = "expected 60 chars from bcrypt but got: " . $crypt;
-						trigger_error($message, E_USER_ERROR);
+						fatalError($message);
 					}
- 				}
+ 				} else {
+					fatalError("bcrypt specified as encryption option but is not supported by this PHP");
+				}
 			case 'md5':
 			default:
 				return md5($valueToEncrypt);
